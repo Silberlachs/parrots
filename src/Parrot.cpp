@@ -6,10 +6,11 @@
 
 using namespace std;
 
-#define COLOR_RED "\033[1;31m"
+#define COLOR_RED "\033[1;41m"
 #define COLOR_GREEN "\033[1;42m"
 #define COLOR_BLUE "\033[1;44m"
 #define COLOR_YELLOW "\033[1;43m"
+#define COLOR_YELLOW_FOREGROUND "\033[1;36m"
 
 namespace ParrotDomain{
 
@@ -19,14 +20,16 @@ namespace ParrotDomain{
     std::mt19937 gen(rd());
 
     //some number distributors to play around with
-    std::uniform_real_distribution<double> sleep_distributor(-0.5, 1.5);    //double usefull for sleep timers
+    std::uniform_real_distribution<double> sleep_distributor(-0.5, 1.5);    //sleep timer
     std::uniform_real_distribution<double> playTime_distributor(2.0, 10.0);
     std::uniform_real_distribution<double> mumblechance(1, 20);  // dnd style chance calculation (D20 ; 20 = 5%)
     std::uniform_real_distribution<double> playfullness(1, 20);
+    std::uniform_real_distribution<double> *bathneed = &playfullness;  //distributor can be pointer   
+    std::uniform_real_distribution<double> *bathtime_distributor = &playTime_distributor;  //distributor can be pointer  
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Parrot::Parrot(ParrotColor color, int threadId, Toybox *box) : color_(color), threadId_(threadId), toybox_(box) {}
+    Parrot::Parrot(ParrotColor color, int threadId, Toybox *box, BirdBath *bath) : color_(color), threadId_(threadId), toybox_(box), bath_(bath) {}
 
     string Parrot::getColor() const {
         switch (color_) {
@@ -56,8 +59,20 @@ namespace ParrotDomain{
             //mumble chance 10 % as per DND dice roll
             if(mumblechance(gen) >= 19)  mumble();
 
-            //boredome will increment over time
-            if(playfullness(gen) + boredom_++ >= 19)  play();
+            if(!skipcycle_){    //can parrot act?
+
+                //boredom will increment over time
+                if(playfullness(gen) + boredom_++ >= 19)  play();
+
+                //random distributor used pointer style
+                if((*bathneed)(gen) >= 19) bath();
+
+            }
+            else{
+                skipcycle_--;
+            }
+
+
         }
 
     }
@@ -69,6 +84,10 @@ namespace ParrotDomain{
     }
 
     void Parrot::play(){
+
+            if(toybox_ == nullptr)
+                return;
+
             if(toybox_->try_acquire()){
 
                 fprintf(stdout, "%s[ + ] Parrot %i is playing with the toybox ..\033[0m\n", toybox_->getColour().c_str(), threadId_);
@@ -79,4 +98,22 @@ namespace ParrotDomain{
             }
     }
 
+    void Parrot::bath(){
+
+            if(bath_ == nullptr)
+                    return;
+
+        
+            if(bath_->try_acquire()){
+
+                fprintf(stdout, "%s[ + ] Parrot %i is taking a bath ..\033[0m\n", COLOR_YELLOW_FOREGROUND, threadId_);
+                std::this_thread::sleep_for(std::chrono::duration<double>(5.0 + (*bathtime_distributor)(gen)));
+                fprintf(stdout, "%s[ - ] Parrot %i finished taking a bath ..\033[0m\n", COLOR_YELLOW_FOREGROUND, threadId_);
+                bath_->release();
+            }
+
+            //parrot needs some time to dry
+            skipcycle_ = 4;
+
+    }
 }

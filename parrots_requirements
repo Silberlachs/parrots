@@ -15,6 +15,9 @@ wenn papageien nicht baden, schlafen oder fressen, können sie ein mutex auf ein
 es kann maximal 1 vogel mit einem spielzeug spielen, außerdem soll jedes spielzeug nur für die eine hälfte der
 farben verfügbar sein. (bei ungerader anzahl auf- oder abgerunden)
 
+es gibt eine badewanne, die von jedem vogel genutzt werden kann, aber die nutzung dauert länger als spielen,
+und anschließend muss man noch 4 cycles lang trocknen (währenddessen kann man nichts tun außer hungrig werden (siehe unten))
+
 es gibt einen futternapf mit einer kapazität k (richtwert 500), der mit einer usereingabe auf der konsole aufgefüllt werden kann
 der futternapf wird auch an ein mutex gebunden, so dass immer nur ein papagei gleichzeitig fressen kann
 ein papagei hat 15 + 0..5 kapazität in seinem magen, bevor er keinen hunger mehr hat. eine einheit zu fressen dauert 0.5 sekunden
@@ -31,7 +34,7 @@ die anderen sollen dann solange warten, bis sie an der reihe sind (sie können n
 papageien ignorieren einen leeren napf, werden aber immer häufiger die aktion "screach" ausführen,
 wenn sie dauerhaft hungrig sind oder ihr bordom zu hoch wird. durch die aktion screach geht ihre
 happyness nach unten, welche sich wiederum auf die chance zu screachen auswirkt. 
-spielen und custom interaktionen steigern die happyness. 
+spielen, baden und custom interaktionen steigern die happyness. 
 
 alle 5 aktionen soll ein wert "müdigkeit" verändert werden, der die ausdauer des vogels repräsentiert. jeder vogel soll beim
 erzeugen einen individuellen treshhold zwischen 15 und 25 bekommen, und dieser entscheided wie hoch die wahrscheinlichkeit
@@ -41,4 +44,11 @@ counter weiter geführt, der vogel wird also durch schlafen auch hungrig.
 [ pro version: ]
 wenn sie gute laune haben, werden sie vermehrt custom_words schnattern, wenn sie unglücklich sind, schreien [sreach] sie herum
 papageien kennen jeder zunächst ein custom word von einer liste, aber man kann mit ihnen sprechen und sie können davon
-wörter erlernen
+wörter erlernen. 
+
+ein unglücklicher papagei kann gegen einen anderen kämpfen, dadurch geht die happyness des verlierers nach unten 
+(der mit dem niedrigeren magenscore)
+
+ein papagei kann sich einen anderen als freund oder partner aussuchen, wenn der andere ihn auch aussucht.
+er soll mit seinem freund spielen können, was die happyness von beiden steigert. 
+ich bin mir noch nicht sicher wie ich das implementieren möchte.

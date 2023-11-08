@@ -3,6 +3,7 @@
 
 #include <string>
 #include "Toybox.h"
+#include "BirdBath.h"
 
 namespace ParrotDomain{
 
@@ -10,7 +11,7 @@ namespace ParrotDomain{
 
     class Parrot{
         public:
-            Parrot(ParrotColor color, int thradId, Toybox *box);
+            Parrot(ParrotColor color, int thradId, Toybox *box = nullptr, BirdBath *bath = nullptr);
             std::string getColor() const;
             void run(void);
 
@@ -18,9 +19,12 @@ namespace ParrotDomain{
             ParrotColor color_;
             int threadId_;
             int boredom_;
-            Toybox *toybox_;
+            int skipcycle_ = 0;
+            Toybox *toybox_ = nullptr;
+            BirdBath *bath_ = nullptr;
             void mumble(void);
             void play(void);
+            void bath(void);
 
     };
 }
