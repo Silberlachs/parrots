@@ -10,7 +10,6 @@ namespace ParrotDomain{
 
     class Parrot{
         public:
-            Parrot();
             Parrot(ParrotColor color, int thradId, Toybox *box);
             std::string getColor() const;
             void run(void);
@@ -18,8 +17,10 @@ namespace ParrotDomain{
         private:
             ParrotColor color_;
             int threadId_;
+            int boredom_;
             Toybox *toybox_;
             void mumble(void);
+            void play(void);
 
     };
 }

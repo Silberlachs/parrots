@@ -6,59 +6,77 @@
 
 using namespace std;
 
+#define COLOR_RED "\033[1;31m"
+#define COLOR_GREEN "\033[1;42m"
+#define COLOR_BLUE "\033[1;44m"
+#define COLOR_YELLOW "\033[1;43m"
+
 namespace ParrotDomain{
 
-    // Mersenne Twister Engine
+    ///////////////////      Mersenne Twister Engine (random generator)     ////////////////////////////////
+
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_real_distribution<double> dis(-0.5, 1.5);
 
-    Parrot::Parrot(): color_(RED){}
+    //some number distributors to play around with
+    std::uniform_real_distribution<double> sleep_distributor(-0.5, 1.5);    //double usefull for sleep timers
+    std::uniform_real_distribution<double> playTime_distributor(2.0, 10.0);
+    std::uniform_real_distribution<double> mumblechance(1, 20);  // dnd style chance calculation (D20 ; 20 = 5%)
+    std::uniform_real_distribution<double> playfullness(1, 20);
 
-    Parrot::Parrot(ParrotColor color, int threadId, Toybox *box) : color_(color), threadId_(threadId), toybox_(box) {
-        
-    }
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void Parrot::mumble(){
-        fprintf(stdout, "[ ? ] The %s parrot is mumbling (Thread %i)\n", getColor().c_str(), threadId_); 
-    }
+    Parrot::Parrot(ParrotColor color, int threadId, Toybox *box) : color_(color), threadId_(threadId), toybox_(box) {}
 
     string Parrot::getColor() const {
         switch (color_) {
             case RED:
-                return "Red";
+                return COLOR_RED;
             case GREEN:
-                return "Green";
+                return COLOR_GREEN;
             case BLUE:
-                return "Blue";
+                return COLOR_BLUE;
             case YELLOW:
-                return "Yellow";
+                return COLOR_YELLOW;
             default:
                 return "Unknown";
         }
     }
 
+    //////////////////////////////       Parrot main working function       /////////////////////////////
     void Parrot::run(){
 
+        //parrot lifecycle. certain activities will be more likely to occure based on parrot's internal state 
         while (true) {
 
+            //parrot takes a moment to think ..
+            double delay = 1.0 + sleep_distributor(gen);
+            std::this_thread::sleep_for(std::chrono::duration<double>(delay));
+
+            //mumble chance 10 % as per DND dice roll
+            if(mumblechance(gen) >= 19)  mumble();
+
+            //boredome will increment over time
+            if(playfullness(gen) + boredom_++ >= 19)  play();
+        }
+
+    }
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    void Parrot::mumble(){
+        fprintf(stdout, "%s[ ? ] The parrot is mumbling (Thread %i)\033[0m\n", getColor().c_str(), threadId_); 
+    }
+
+    void Parrot::play(){
             if(toybox_->try_acquire()){
 
                 fprintf(stdout, "%s[ + ] Parrot %i is playing with the toybox ..\033[0m\n", toybox_->getColour().c_str(), threadId_);
-                std::this_thread::sleep_for(std::chrono::duration<double>(5.0));
+                std::this_thread::sleep_for(std::chrono::duration<double>(3.0 + playTime_distributor(gen)));
                 fprintf(stdout, "%s[ - ] Parrot %i finished playing ..\033[0m\n", toybox_->getColour().c_str(), threadId_);
+                boredom_ = 0;
                 toybox_->release();
             }
-
-
-            //mumble chance 75 % ??
-            if(0.75 - dis(gen) >= 0)  mumble();
-
-            // Generate a random delay between -0.5 and 1.5 seconds
-            double delay = 1.0 + dis(gen);
-            std::this_thread::sleep_for(std::chrono::duration<double>(delay));
-        }
-
     }
 
 }
