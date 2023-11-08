@@ -4,23 +4,26 @@
 #include <chrono>
 #include <random>
 #include "include/Parrot.h"
+#include "include/Toybox.h"
 
 using namespace ParrotDomain;
 using namespace std;
 
 // Parrot factory
-Parrot createParrot(ParrotColor color, int parrotCounter) {
-    return Parrot(color, parrotCounter);
+Parrot createParrot(ParrotColor color, int parrotCounter, Toybox *box) {
+    return Parrot(color, parrotCounter, box);
 }
 
 int main()
 {
     vector<thread> parrotThreads;
 
-    // Create a random number generator for color
+    // Create a random number generator for colorc++
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int> colorDistribution(0, 3);
+
+    Toybox box;
 
     ParrotColor parrotColor;
     for (int i = 0; i < 10; i++) {
@@ -40,8 +43,7 @@ int main()
                 break;
         }
 
-        fprintf(stdout, "DEBUG running loop #%i DEBUG\n",i);
-        parrotThreads.push_back(thread (&Parrot::run, createParrot(parrotColor, i)));  
+        parrotThreads.push_back(thread (&Parrot::run, createParrot(parrotColor, i, &box)));  
     }
 
     for (thread &t : parrotThreads) {

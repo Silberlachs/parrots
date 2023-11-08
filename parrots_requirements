@@ -1,0 +1,35 @@
+mehrere papageien (rot und blau) , von 2 traits abgeleitet ( "vererbung" test )
+
+papageien werden in threads repräsentiert die nach fixen triggern ihren status updaten
+threads haben enum mit ihren möglichen aktivitäten als parameter in ihrer öffentlichen funktion und matchen diese dann 
+
+
+papageien sind in einem "default" modus, in dem sie weder hungrig sind und fressen, noch spielen. die ausgeführte aktion hierbei
+lautet "schnattern"
+
+es gibt 2 spielzeuge
+wenn papageien nicht baden, schlafen oder fressen, können sie ein mutex auf eines dieser spielzeuge beantragen
+das eine spielzeug kann nur von roten, das andere nur von blauen papageien bespielt werden, und es kann immer nur ein papagei mit einem spielzeug spielen. es gibt außerdem noch eine badewanne, die von jedem papagei benutzt werden kann ( aber immer nur von einem gleichzeitig )
+
+es gibt einen futternapf mit einer kapazität k, der mit einer usereingabe auf der konsole ( eigener thread! ) aufgefüllt werden kann
+der futternapf wird auch an ein mutex gebunden, so dass immer nur ein papagei gleichzeitig fressen kann
+ein papagei hat 3 kapazität in seinem magen, bevor er keinen hunger mehr hat
+
+papgeien benötigen für die ausführung jeder aktion 5 sekunden realzeit, in der der thread schläft, um die aktion zu repräsentieren.
+da nicht alle papageien gleich schnell sind, soll jedem beim erstellen ein zufälliger wert zwischen -0.5 und 1.5 sekunden zugewiesen werden,
+mit dessen hilfe er die realzeit bei der ausführung manipuliert. 
+
+papageien wollen nach möglichkeit immer zuerst fressen, wenn sie hungrig sind. ist gerade kein platz am futternapf, nehmen sie ein bad.
+falls auch das nicht möglich ist, spielen sie und schnattern nur herum, wenn es nichts anderes zu tun gibt.
+
+nachdem 2 tätigkeiten aus fressen, spielen, baden oder schnattern ausgeführt wurden, wird immer die aktion "kacken" ausgeführt und
+der magen verliert 1 kapazität. ist die kapazität aufgebraucht, bekommt der papagei den zustand "hungrig" und wird versuchen, am 
+napf zu fressen. sind mehrere papageien hungrig und wollen fressen, kommt logisch nur einer dran. die anderen sollen dann solange
+die default aktion "schnattern" ausführen, bis sie an der reihe sind.
+
+alle 5 aktionen soll ein wert "müdigkeit" erhöht werden, der die ausdauer des vogels repräsentiert. jeder vogel soll beim
+erzeugen einen individuellen treshhold bekommen, der niemals höher als 10 für blaue und 15 für rote vögel sein darf. jeh näher der wert müdigkeit an den treshhold heranrückt, desto höher soll die chance werden, dass der vogel in einen ruhemodus wechselt, wobei er die aktion "schlafen" ausführt
+( die den kacktimer weiter führt ) und alle 2 zeitintervalle den wert müdigkeit um 1 reduziert, bis er auf 0 ist.
+
+außerdem könnte man noch einen thread einführen, der sich eingaben merkt und bestimmte chancen hat, dass die papageien diese eingaben lernen
+und beim schnattern wiedergeben

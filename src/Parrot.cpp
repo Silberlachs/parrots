@@ -8,14 +8,19 @@ using namespace std;
 
 namespace ParrotDomain{
 
-    Parrot::Parrot(): color_(RED){
-    }
+    // Mersenne Twister Engine
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<double> dis(-0.5, 1.5);
 
-    Parrot::Parrot(ParrotColor color, int threadId) : color_(color), threadId_(threadId) {
+    Parrot::Parrot(): color_(RED){}
+
+    Parrot::Parrot(ParrotColor color, int threadId, Toybox *box) : color_(color), threadId_(threadId), toybox_(box) {
+        
     }
 
     void Parrot::mumble(){
-        fprintf(stdout, "The %s parrot is mumbling (Thread %i)\n", getColor().c_str(), threadId_); 
+        fprintf(stdout, "[ ? ] The %s parrot is mumbling (Thread %i)\n", getColor().c_str(), threadId_); 
     }
 
     string Parrot::getColor() const {
@@ -35,13 +40,19 @@ namespace ParrotDomain{
 
     void Parrot::run(){
 
-        // Mersenne Twister Engine
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_real_distribution<double> dis(-0.5, 1.5);
-
         while (true) {
-            mumble();
+
+            if(toybox_->try_acquire()){
+
+                fprintf(stdout, "\033[1;31m[ + ] Parrot %i is playing with the toybox ..\033[0m\n", threadId_);
+                std::this_thread::sleep_for(std::chrono::duration<double>(5.0));
+                fprintf(stdout, "\033[1;31m[ - ] Parrot %i finished playing ..\033[0m\n", threadId_);
+                toybox_->release();
+            }
+
+
+            //mumble chance 75 % ??
+            if(0.75 - dis(gen) >= 0)  mumble();
 
             // Generate a random delay between -0.5 and 1.5 seconds
             double delay = 1.0 + dis(gen);

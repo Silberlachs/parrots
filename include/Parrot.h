@@ -2,6 +2,7 @@
 #define Parrot_H
 
 #include <string>
+#include "Toybox.h"
 
 namespace ParrotDomain{
 
@@ -10,13 +11,14 @@ namespace ParrotDomain{
     class Parrot{
         public:
             Parrot();
-            Parrot(ParrotColor color, int thradId);
+            Parrot(ParrotColor color, int thradId, Toybox *box);
             std::string getColor() const;
             void run(void);
 
         private:
             ParrotColor color_;
             int threadId_;
+            Toybox *toybox_;
             void mumble(void);
 
     };
