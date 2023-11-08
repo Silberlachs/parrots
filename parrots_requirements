@@ -17,7 +17,8 @@ farben verfügbar sein. (bei ungerader anzahl auf- oder abgerunden)
 
 es gibt einen futternapf mit einer kapazität k (richtwert 500), der mit einer usereingabe auf der konsole aufgefüllt werden kann
 der futternapf wird auch an ein mutex gebunden, so dass immer nur ein papagei gleichzeitig fressen kann
-ein papagei hat 15 kapazität in seinem magen, bevor er keinen hunger mehr hat. eine einheit zu fressen dauert 0.5 sekunden
+ein papagei hat 15 + 0..5 kapazität in seinem magen, bevor er keinen hunger mehr hat. eine einheit zu fressen dauert 0.5 sekunden
+man kann den futternapf auf der konsole auffüllen
 
 papageien wollen nach möglichkeit immer zuerst fressen, wenn sie hungrig sind. ist gerade kein platz am futternapf, nehmen sie ein bad.
 falls auch das nicht möglich ist, spielen sie und schnattern nur herum, wenn es nichts anderes zu tun gibt.
@@ -28,12 +29,16 @@ napf zu fressen. sind mehrere papageien hungrig und wollen fressen, kommt logisc
 die anderen sollen dann solange warten, bis sie an der reihe sind (sie können nur schnattern).
 
 papageien ignorieren einen leeren napf, werden aber immer häufiger die aktion "screach" ausführen,
-wenn sie dauerhaft hungrig sind oder ihr bordom zu hoch wird.
+wenn sie dauerhaft hungrig sind oder ihr bordom zu hoch wird. durch die aktion screach geht ihre
+happyness nach unten, welche sich wiederum auf die chance zu screachen auswirkt. 
+spielen und custom interaktionen steigern die happyness. 
 
 alle 5 aktionen soll ein wert "müdigkeit" verändert werden, der die ausdauer des vogels repräsentiert. jeder vogel soll beim
 erzeugen einen individuellen treshhold zwischen 15 und 25 bekommen, und dieser entscheided wie hoch die wahrscheinlichkeit
 zu schlafen ist. ein vogel wird so viele cycles schlafen, bis seine müdigkeit resettet wurde. dabei wird nur der defecation
 counter weiter geführt, der vogel wird also durch schlafen auch hungrig.
 
-außerdem könnte man noch einen thread einführen, der sich eingaben merkt und bestimmte chancen hat, dass die papageien diese eingaben lernen
-und beim schnattern wiedergeben. ein command "talk" für das interface wäre hierfür denkbar
+[ pro version: ]
+wenn sie gute laune haben, werden sie vermehrt custom_words schnattern, wenn sie unglücklich sind, schreien [sreach] sie herum
+papageien kennen jeder zunächst ein custom word von einer liste, aber man kann mit ihnen sprechen und sie können davon
+wörter erlernen
