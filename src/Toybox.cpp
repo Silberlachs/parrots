@@ -2,6 +2,12 @@
 
 namespace ParrotDomain{
 
+    Toybox::Toybox(std::string colour): colour_(colour){}
+
+    std::string Toybox::getColour(){
+        return colour_;
+    }
+
     void Toybox::release() {
         std::lock_guard<decltype(mutex_)> lock(mutex_);
         if(count_ < max_slots_)

@@ -23,27 +23,34 @@ int main()
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int> colorDistribution(0, 3);
 
-    Toybox box;
+    Toybox box_1("\033[1;31m");
+    Toybox box_2("\033[1;34m");
 
     ParrotColor parrotColor;
     for (int i = 0; i < 10; i++) {
 
+        Toybox *boxPtr;
+
         switch (colorDistribution(gen)) {
             case 0:
                 parrotColor = RED;
+                boxPtr = &box_1;
                 break;
             case 1:
                 parrotColor = BLUE;
+                boxPtr = &box_1;
                 break;
             case 2:
                 parrotColor = GREEN;
+                boxPtr = &box_2;
                 break;
             case 3:
                 parrotColor = YELLOW;
+                boxPtr = &box_2;
                 break;
         }
 
-        parrotThreads.push_back(thread (&Parrot::run, createParrot(parrotColor, i, &box)));  
+        parrotThreads.push_back(thread (&Parrot::run, createParrot(parrotColor, i, boxPtr)));  
     }
 
     for (thread &t : parrotThreads) {

@@ -44,9 +44,9 @@ namespace ParrotDomain{
 
             if(toybox_->try_acquire()){
 
-                fprintf(stdout, "\033[1;31m[ + ] Parrot %i is playing with the toybox ..\033[0m\n", threadId_);
+                fprintf(stdout, "%s[ + ] Parrot %i is playing with the toybox ..\033[0m\n", toybox_->getColour().c_str(), threadId_);
                 std::this_thread::sleep_for(std::chrono::duration<double>(5.0));
-                fprintf(stdout, "\033[1;31m[ - ] Parrot %i finished playing ..\033[0m\n", threadId_);
+                fprintf(stdout, "%s[ - ] Parrot %i finished playing ..\033[0m\n", toybox_->getColour().c_str(), threadId_);
                 toybox_->release();
             }
 

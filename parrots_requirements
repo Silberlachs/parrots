@@ -1,4 +1,4 @@
-mehrere papageien (rot und blau) , von 2 traits abgeleitet ( "vererbung" test )
+papageien mit verschiedenen farben werden in threads realisiert...
 
 papageien werden in threads repräsentiert die nach fixen triggern ihren status updaten
 threads haben enum mit ihren möglichen aktivitäten als parameter in ihrer öffentlichen funktion und matchen diese dann 
