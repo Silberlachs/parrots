@@ -30,10 +30,10 @@ alle 2-10 cycles soll die aktion "poop" ausgeführt wurden, der magen verliert 1
 ist die kapazität aufgebraucht, bekommt der papagei den zustand "hungrig" und wird versuchen, am 
 napf zu fressen. sind mehrere papageien hungrig und wollen fressen, kommt logisch nur einer dran.
 
-alle 5 aktionen soll ein wert "müdigkeit" verändert werden, der die ausdauer des vogels repräsentiert. jeder vogel soll beim
+einmal pro cycle soll stamina_ decrementiert werden, der die ausdauer des vogels repräsentiert. jeder vogel soll beim
 erzeugen einen individuellen treshhold zwischen 15 und 25 bekommen, und dieser entscheided wie hoch die wahrscheinlichkeit
 zu schlafen ist. ein vogel wird so viele cycles schlafen, bis seine müdigkeit resettet wurde. dabei wird nur der poopingcounter
-weiter geführt, der vogel wird also durch schlafen auch hungrig.
+weiter geführt, der vogel wird also durch schlafen auch hungrig. die neue stamina kann wieder ausgewürfelt werden
 
 [ pro version: ]
 wenn sie gute laune haben, werden sie vermehrt custom_words schnattern, wenn sie unglücklich sind, schreien [sreach] sie herum
