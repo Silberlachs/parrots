@@ -10,7 +10,7 @@ using namespace std;
 #define COLOR_GREEN "\033[1;42m"
 #define COLOR_BLUE "\033[1;44m"
 #define COLOR_YELLOW "\033[1;43m"
-#define COLOR_YELLOW_FOREGROUND "\033[1;36m"
+#define COLOR_YELLOW_FOREGROUND "\033[1;93m"
 #define COLOR_BLUE_FOREGROUND "\033[1;94m"
 
 namespace ParrotDomain{
@@ -74,42 +74,37 @@ namespace ParrotDomain{
         //parrot lifecycle. certain activities will be more likely to occure based on parrot's internal state 
         while (true) {
 
-            //parrot takes a moment to think ..
+            //parrot takes a moment to think or dream..
             double delay = 1.0 + sleep_distributor(gen);
             std::this_thread::sleep_for(std::chrono::duration<double>(delay));
 
-            //mumble chance 10 % as per DND dice roll
-            if(mumblechance(gen) >= 19)  mumble();
+            checkStamina();
 
-            if(!skipcycle_ && stamina_>0){    //can parrot act? (test against 0)
+            if(!poopcounter_--)
+                poop();
 
-                if(!stomache_food_) eat();
+            if(skipcycle_){    //can parrot act? (test against 0)
 
-                //boredom will increment over time
-                if(playfullness(gen) + boredom_++ >= 19)  play();
+                if(stamina_==0)
+                    continue;
 
-                //random distributor used pointer style
+                //mumble chance 10 % as per DND dice roll
+                if(mumblechance(gen) >= 19)  mumble();
+
+                if(!stomache_food_) {
+                    eat();
+                    continue;
+                }
+
+                //boredom will increment over time (chance increments from 5% upwards + 2.5% / cycle)
+                if(playfullness(gen) + (int)(boredom_++ / 2) >= 19)  play();
+
+                //random distributor used pointer style ( chance 10% )
                 if((*bathneed)(gen) >= 19) bath();
 
             }
             else
                 skipcycle_--;
-            
-            //a parrot needs to sleep as long as his stamina is completely refilled
-            //sleeping has a various timing (sleep_distributor) and needs to update poopcounter
-            //so we need to include it into our main working loop (and not as a member function)
-            if(stamina_>0)
-                stamina_--;
-            else{
-                sleeptimer_--;
-                if(sleeptimer_ == 0){
-                    stamina_ = (int)stamina_distributor(gen);
-                    sleeptimer_ = stamina_;
-                }
-            }
-
-            if(!poopcounter_--)
-                poop();
 
         }
 
@@ -132,6 +127,8 @@ namespace ParrotDomain{
                 boredom_ = 0;
                 toybox_->release();
             }
+
+            stamina_-=5;
     }
 
     void Parrot::bath(){
@@ -145,6 +142,8 @@ namespace ParrotDomain{
                 std::this_thread::sleep_for(std::chrono::duration<double>(5.0 + (*bathtime_distributor)(gen)));
                 bath_->release();
             }
+
+            stamina_-=3;
 
             //parrot needs some time to dry
             skipcycle_ = 6;
@@ -166,8 +165,6 @@ namespace ParrotDomain{
         
             if(foodbowl_->try_acquire()){
 
-                fprintf(stdout, "%s[ + ] Parrot %i is eating food ..\033[0m\n", COLOR_BLUE_FOREGROUND, threadId_);
-
                 //give the parrot some randomness in how statiated it is
                 int food_amount = foodbowl_->eat_from(10 + (int)food_distributor(gen));
                 stomache_food_ = food_amount;
@@ -177,10 +174,28 @@ namespace ParrotDomain{
                     std::this_thread::sleep_for(std::chrono::duration<double>(1.0));
                 }
 
+                fprintf(stdout, "%s[ + ] Parrot %i has eaten %i units of food ..\033[0m\n", COLOR_YELLOW_FOREGROUND, threadId_, food_amount);
                 foodbowl_->release();
             }
 
+            stamina_-= 3;
+
             //parrot needs some time to rest after eating
             skipcycle_ = 4;
+    }
+
+    void Parrot::checkStamina(){
+            if(stamina_>0){
+                stamina_--;
+            }
+            else{
+                sleeptimer_--;
+                if(sleeptimer_ == 0){
+                    fprintf(stdout, "%s[ + ] Parrot %i is waking from slumber ..\033[0m\n", getColor().c_str(), threadId_);
+                    stamina_ = (int)stamina_distributor(gen);
+                    sleeptimer_ = stamina_;
+                    skipcycle_ = 2; //chill for a moment after waking up
+                }
+            }
     }
 }

@@ -40,7 +40,7 @@ namespace ParrotDomain{
             void bath(void);
             void poop(void);
             void eat(void);
-            void sleep(void);
+            void checkStamina(void);
     };
 }
 #endif
