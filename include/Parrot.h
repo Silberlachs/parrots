@@ -29,6 +29,8 @@ namespace ParrotDomain{
             int boredom_;
             int stomache_food_;
             int poopcounter_;
+            int stamina_;
+            int sleeptimer_;
             int skipcycle_ = 0;
             Toybox *toybox_ = nullptr;
             BirdBath *bath_ = nullptr;
@@ -38,7 +40,7 @@ namespace ParrotDomain{
             void bath(void);
             void poop(void);
             void eat(void);
-
+            void sleep(void);
     };
 }
 #endif

@@ -29,6 +29,7 @@ namespace ParrotDomain{
     std::uniform_real_distribution<double> *bathtime_distributor = &playTime_distributor;
     std::uniform_real_distribution<double> *poop_distributor = &playTime_distributor;
     std::uniform_real_distribution<double> food_distributor(0.0, 5.0); 
+    std::uniform_real_distribution<double> stamina_distributor(15.0, 25.0); 
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -46,8 +47,10 @@ namespace ParrotDomain{
             bath_(bath), 
             foodbowl_(foodbowl) 
         {
-            stomache_food_ = 10 + (int)food_distributor(gen);
-            poopcounter_ = (*poop_distributor)(gen);    //calling rng generator via pointer
+            stomache_food_  = 10 + (int)food_distributor(gen);
+            poopcounter_    = (*poop_distributor)(gen);    //calling rng generator via pointer
+            stamina_        = (int)stamina_distributor(gen);
+            sleeptimer_      = stamina_;
         }
 
     string Parrot::getColor() const {
@@ -78,7 +81,7 @@ namespace ParrotDomain{
             //mumble chance 10 % as per DND dice roll
             if(mumblechance(gen) >= 19)  mumble();
 
-            if(!skipcycle_){    //can parrot act? (test against 0)
+            if(!skipcycle_ && stamina_>0){    //can parrot act? (test against 0)
 
                 if(!stomache_food_) eat();
 
@@ -92,6 +95,18 @@ namespace ParrotDomain{
             else
                 skipcycle_--;
             
+            //a parrot needs to sleep as long as his stamina is completely refilled
+            //sleeping has a various timing (sleep_distributor) and needs to update poopcounter
+            //so we need to include it into our main working loop (and not as a member function)
+            if(stamina_>0)
+                stamina_--;
+            else{
+                sleeptimer_--;
+                if(sleeptimer_ == 0){
+                    stamina_ = (int)stamina_distributor(gen);
+                    sleeptimer_ = stamina_;
+                }
+            }
 
             if(!poopcounter_--)
                 poop();
