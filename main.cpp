@@ -12,12 +12,17 @@ using namespace ParrotDomain;
 using namespace std;
 
 // Parrot factory
-Parrot createParrot(ParrotColor color, int parrotCounter, Toybox *box = nullptr, BirdBath *bath = nullptr, Foodbowl *foodbowl = nullptr) {
+Parrot createParrot(ParrotColor color, 
+                    int parrotCounter, 
+                    Toybox *box = nullptr, 
+                    BirdBath *bath = nullptr, 
+                    Foodbowl *foodbowl = nullptr) 
+{
     return Parrot(color, parrotCounter, box, bath, foodbowl);
 }
 
-int main()
-{
+int main(){
+
     vector<thread> parrotThreads;
 
     std::random_device rd;
