@@ -11,13 +11,17 @@
 using namespace ParrotDomain;
 using namespace std;
 
+/*
+    Made by clockwork 2025
+*/
+
+
 // Parrot factory
 Parrot createParrot(ParrotColor color, 
                     int parrotCounter, 
                     Toybox *box = nullptr, 
                     BirdBath *bath = nullptr, 
-                    Foodbowl *foodbowl = nullptr) 
-{
+                    Foodbowl *foodbowl = nullptr) {
     return Parrot(color, parrotCounter, box, bath, foodbowl);
 }
 
